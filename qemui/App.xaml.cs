@@ -13,6 +13,11 @@ namespace qemui
     /// </summary>
     public partial class App : Application
     {
-        
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show("Exception in " + e.Exception.TargetSite + " of " + e.Exception.Source +":\n" + e.Exception.Message + "\n\nStack Trace:\n" + e.Exception.StackTrace, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            e.Handled = true;
+            this.Shutdown();
+        }
     }
 }
