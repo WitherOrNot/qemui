@@ -25,8 +25,8 @@
             </ListBox>
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
             <Grid Name="VMData" Grid.Column="2">
-                <Button Content="Start" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="StartVM" />
-                <Button Content="Stop" HorizontalAlignment="Left" Margin="90,10,0,0" VerticalAlignment="Top" Width="75" Click="StopVM"/>
+                <Button Name="StartVMButton" Content="Start" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="StartVM" />
+                <Button Name="StopVMButton" Content="Stop" HorizontalAlignment="Left" Margin="90,10,0,0" VerticalAlignment="Top" Width="75" Click="StopVM"/>
                 <Button Content="Edit" HorizontalAlignment="Left" Margin="170,10,0,0" VerticalAlignment="Top" Width="75" Click="EditVM_Click"/>
                 <Label Content="Drives" HorizontalAlignment="Left" Margin="10,44,0,0" VerticalAlignment="Top" />
                 <ListBox Name="VMDrives" Height="100" Margin="10,70,10,0" VerticalAlignment="Top" />

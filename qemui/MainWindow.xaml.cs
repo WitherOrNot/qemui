@@ -156,6 +156,16 @@ namespace qemui
                     };
                     VMDrives.Items.Add(item);
                 }
+
+                if (selectedVM.isRunning)
+                {
+                    StartVMButton.IsEnabled = false;
+                    StopVMButton.IsEnabled = true;
+                } else
+                {
+                    StopVMButton.IsEnabled = false;
+                    StartVMButton.IsEnabled = true;
+                }
             } else
             {
                 foreach (Control control in VMData.Children)
@@ -170,6 +180,8 @@ namespace qemui
             if (!selectedVM.isRunning)
             {
                 ((ListBoxItem)VMListView.SelectedItem).Content += " - Running";
+                StartVMButton.IsEnabled = false;
+                StopVMButton.IsEnabled = true;
                 selectedVM.Start();
             }
         }
@@ -183,6 +195,12 @@ namespace qemui
                     item.Content = vm.Name;
                 }
             }
+            
+            if (vm.ID == selectedVM.ID)
+            {
+                StopVMButton.IsEnabled = false;
+                StartVMButton.IsEnabled = true;
+            }
         }
 
         private void StopVM(object sender, RoutedEventArgs e)
@@ -190,6 +208,8 @@ namespace qemui
             if (selectedVM.isRunning)
             {
                 ((ListBoxItem)VMListView.SelectedItem).Content = selectedVM.Name;
+                StopVMButton.IsEnabled = false;
+                StartVMButton.IsEnabled = true;
                 selectedVM.Stop();
             }
         }
