@@ -90,7 +90,7 @@ namespace qemui
             {
                 ListBoxItem item = new ListBoxItem
                 {
-                    Content = vm.Name,
+                    Content = vm.Name + (vm.isRunning ? " - Running" : ""),
                     Name = "VM_" + vm.ID
                 };
                 VMListView.Items.Add(item);
@@ -277,6 +277,8 @@ namespace qemui
                     e.Cancel = true;
                 }
             }
+
+            vmlist.Save();
         }
     }
 }
