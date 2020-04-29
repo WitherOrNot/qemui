@@ -229,18 +229,13 @@ namespace qemui
 
         public void VM_Killed(VM vm)
         {
-            foreach (ListBoxItem item in VMListView.Items)
-            {
-                if (item.Name == "VM_" + vm.ID)
-                {
-                    item.Content = vm.Name;
-                }
-            }
-            
             if (vm.ID == selectedVM.ID)
             {
                 StopVMButton.IsEnabled = false;
                 StartVMButton.IsEnabled = true;
+                DeleteVMButton.IsEnabled = true;
+                EditVMButton.IsEnabled = true;
+                UpdateListView();
             }
         }
 
