@@ -60,6 +60,8 @@ namespace qemui
         {
             string args = "";
 
+            args += "-display sdl ";
+
             if (hax_accel)
                 args += "-accel hax ";
 
@@ -83,6 +85,21 @@ namespace qemui
                 isRunning = true;
                 QEMUProcess.StartInfo.FileName = Properties.Settings.Default.QEMUPath + "qemu-system-x86_64.exe";
                 QEMUProcess.StartInfo.Arguments = this.toArgs();
+                QEMUProcess.StartInfo.UseShellExecute = false;
+                QEMUProcess.StartInfo.CreateNoWindow = true;
+                QEMUProcess.EnableRaisingEvents = true;
+                QEMUProcess.Start();
+                QEMUProcess.Exited += new EventHandler(QEMUProcess_Exited);
+            }
+        }
+
+        public void Start(string custom_args)
+        {
+            if (!isRunning)
+            {
+                isRunning = true;
+                QEMUProcess.StartInfo.FileName = Properties.Settings.Default.QEMUPath + "qemu-system-x86_64.exe";
+                QEMUProcess.StartInfo.Arguments = custom_args;
                 QEMUProcess.StartInfo.UseShellExecute = false;
                 QEMUProcess.StartInfo.CreateNoWindow = true;
                 QEMUProcess.EnableRaisingEvents = true;

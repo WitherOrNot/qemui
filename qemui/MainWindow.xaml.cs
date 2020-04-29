@@ -29,8 +29,28 @@ namespace qemui
         public VMList vmlist;
         VM selectedVM;
 
+        private void AddKeyCommand(Key key, ModifierKeys modifier, ExecutedRoutedEventHandler handler)
+        {
+            RoutedCommand cmd = new RoutedCommand();
+            cmd.InputGestures.Add(new KeyGesture(key, modifier));
+            CommandBindings.Add(new CommandBinding(cmd, handler));
+        }
+
+        private void AddKeyCommand(Key key, ExecutedRoutedEventHandler handler)
+        {
+            RoutedCommand cmd = new RoutedCommand();
+            cmd.InputGestures.Add(new KeyGesture(key));
+            CommandBindings.Add(new CommandBinding(cmd, handler));
+        }
+
         public MainWindow()
         {
+            AddKeyCommand(Key.Delete, Delete);
+            AddKeyCommand(Key.N, ModifierKeys.Control, NewVM_Click);
+            AddKeyCommand(Key.E, ModifierKeys.Control, EditVM_Click);
+            AddKeyCommand(Key.Enter, StartVM);
+            AddKeyCommand(Key.Q, ModifierKeys.Control, StopVM);
+
             if (VMListPath == "" || !Directory.Exists(Path.GetDirectoryName(VMListPath)))
             {
                 string appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -78,7 +98,7 @@ namespace qemui
                 if (!success)
                     this.Close();
             }
-
+            
             InitializeComponent();
         }
 
@@ -133,6 +153,8 @@ namespace qemui
             {
                 control.Visibility = Visibility.Hidden;
             }
+            VMListView.MouseDoubleClick += (object a, MouseButtonEventArgs b) => { if (selectedVM != null) StartVM(null, null); };
+
             UpdateListView();
         }
 
@@ -177,12 +199,19 @@ namespace qemui
 
         private void StartVM(object sender, RoutedEventArgs e)
         {
-            if (!selectedVM.isRunning)
+            if (selectedVM != null && !selectedVM.isRunning)
             {
                 ((ListBoxItem)VMListView.SelectedItem).Content += " - Running";
                 StartVMButton.IsEnabled = false;
                 StopVMButton.IsEnabled = true;
-                selectedVM.Start();
+
+                if (selectedVM.toArgs() != LaunchArgsBox.Text)
+                {
+                    selectedVM.Start(LaunchArgsBox.Text);
+                } else
+                {
+                    selectedVM.Start();
+                }
             }
         }
 
@@ -205,7 +234,7 @@ namespace qemui
 
         private void StopVM(object sender, RoutedEventArgs e)
         {
-            if (selectedVM.isRunning)
+            if (selectedVM != null && selectedVM.isRunning)
             {
                 ((ListBoxItem)VMListView.SelectedItem).Content = selectedVM.Name;
                 StopVMButton.IsEnabled = false;
@@ -216,40 +245,47 @@ namespace qemui
 
         private void Delete(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult res = MessageBox.Show("Are you sure you want to delete " + selectedVM.Name + "?", "Delete VM", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-            if (res == MessageBoxResult.Yes)
+            if (selectedVM != null)
             {
-                res = MessageBox.Show("Would you like to delete the drive images as well?", "Delete Drive Images", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                MessageBoxResult res = MessageBox.Show("Are you sure you want to delete " + selectedVM.Name + "?", "Delete VM", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
                 if (res == MessageBoxResult.Yes)
                 {
-                    foreach (string drive in selectedVM.drives)
-                    {
-                        try
-                        {
-                            File.Delete(drive);
-                        } catch
-                        {
+                    res = MessageBox.Show("Would you like to delete the drive images as well?", "Delete Drive Images", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
+                    if (res == MessageBoxResult.Yes)
+                    {
+                        foreach (string drive in selectedVM.drives)
+                        {
+                            try
+                            {
+                                File.Delete(drive);
+                            }
+                            catch
+                            {
+
+                            }
                         }
                     }
-                }
 
-                vmlist.vms.Remove(selectedVM);
-                UpdateListView();
-                vmlist.Save();
+                    vmlist.vms.Remove(selectedVM);
+                    UpdateListView();
+                    vmlist.Save();
+                }
             }
         }
 
         private void EditVM_Click(object sender, RoutedEventArgs e)
         {
-            EditVM editVM = new EditVM(selectedVM);
-            editVM.Owner = this;
-            if (editVM.ShowDialog() == true)
+            if (selectedVM != null)
             {
-                UpdateListView();
-                vmlist.Save();
+                EditVM editVM = new EditVM(selectedVM);
+                editVM.Owner = this;
+                if (editVM.ShowDialog() == true)
+                {
+                    UpdateListView();
+                    vmlist.Save();
+                }
             }
         }
 
