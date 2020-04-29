@@ -47,10 +47,34 @@ namespace qemui
     {
         VM newVM;
         List<String> drives = new List<String>();
+
+        private void AddKeyCommand(Key key, ModifierKeys modifier, ExecutedRoutedEventHandler handler)
+        {
+            RoutedCommand cmd = new RoutedCommand();
+            cmd.InputGestures.Add(new KeyGesture(key, modifier));
+            CommandBindings.Add(new CommandBinding(cmd, handler));
+        }
+
+        private void AddKeyCommand(Key key, ExecutedRoutedEventHandler handler)
+        {
+            RoutedCommand cmd = new RoutedCommand();
+            cmd.InputGestures.Add(new KeyGesture(key));
+            CommandBindings.Add(new CommandBinding(cmd, handler));
+        }
+
         public NewVM()
         {
+            AddKeyCommand(Key.O, ModifierKeys.Control, Import_Drive);
+            AddKeyCommand(Key.N, ModifierKeys.Control, Create_Drive);
+            AddKeyCommand(Key.Delete, Remove_Drive);
+
             InitializeComponent();
             this.newVM = new VM();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            DriveList.ContextMenu = (ContextMenu)this.FindResource("DriveMenu");
         }
 
         private void Open_CDROM(object sender, RoutedEventArgs e)

@@ -8,10 +8,20 @@
         Loaded="Window_Loaded"
         Closing="Window_Closing"
         Title="qemui" Height="361.764" Width="542.647">
+    <Window.Resources>
+        <ContextMenu x:Key="VMMenu">
+            <MenuItem Header="Start" InputGestureText="Enter" Click="StartVM"/>
+            <MenuItem Header="Edit" InputGestureText="Ctrl+E" Click="EditVM_Click"/>
+            <MenuItem Header="Stop" InputGestureText="Ctrl+Q" Click="StopVM"/>
+            <Separator />
+            <MenuItem Header="Delete" InputGestureText="Delete" Click="Delete"/>
+        </ContextMenu>
+    </Window.Resources>
+
     <Grid>
         <Menu VerticalAlignment="Top">
             <MenuItem Header="VM">
-                <MenuItem Header="New VM" Click="NewVM_Click"/>
+                <MenuItem Header="New VM" InputGestureText="Ctrl+N" Click="NewVM_Click"/>
             </MenuItem>
         </Menu>
         <Grid Margin="0,18,0,0">
@@ -27,12 +37,12 @@
             <Grid Name="VMData" Grid.Column="2">
                 <Button Name="StartVMButton" Content="Start" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="StartVM" />
                 <Button Name="StopVMButton" Content="Stop" HorizontalAlignment="Left" Margin="90,10,0,0" VerticalAlignment="Top" Width="75" Click="StopVM"/>
-                <Button Content="Edit" HorizontalAlignment="Left" Margin="170,10,0,0" VerticalAlignment="Top" Width="75" Click="EditVM_Click"/>
+                <Button Name="EditVMButton" Content="Edit" HorizontalAlignment="Left" Margin="170,10,0,0" VerticalAlignment="Top" Width="75" Click="EditVM_Click"/>
                 <Label Content="Drives" HorizontalAlignment="Left" Margin="10,44,0,0" VerticalAlignment="Top" />
                 <ListBox Name="VMDrives" Height="100" Margin="10,70,10,0" VerticalAlignment="Top" />
                 <Label Content="Launch Arguments (Advanced)" HorizontalAlignment="Left" Margin="10,175,0,0" Height="26" VerticalAlignment="Top" />
                 <TextBox Name="LaunchArgsBox" Margin="10,201,10,0" TextWrapping="Wrap" Text="" Height="62" VerticalAlignment="Top" />
-                <Button Content="Delete" HorizontalAlignment="Left" Margin="10,277,0,0" Width="75" Click="Delete" Height="20" VerticalAlignment="Top" />
+                <Button Name="DeleteVMButton" Content="Delete" HorizontalAlignment="Left" Margin="10,277,0,0" Width="75" Click="Delete" Height="20" VerticalAlignment="Top" />
             </Grid>
         </Grid>
     </Grid>

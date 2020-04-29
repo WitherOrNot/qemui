@@ -25,8 +25,26 @@ namespace qemui
         public List<String> drives = new List<String>();
         public VM editVM;
 
+        private void AddKeyCommand(Key key, ModifierKeys modifier, ExecutedRoutedEventHandler handler)
+        {
+            RoutedCommand cmd = new RoutedCommand();
+            cmd.InputGestures.Add(new KeyGesture(key, modifier));
+            CommandBindings.Add(new CommandBinding(cmd, handler));
+        }
+
+        private void AddKeyCommand(Key key, ExecutedRoutedEventHandler handler)
+        {
+            RoutedCommand cmd = new RoutedCommand();
+            cmd.InputGestures.Add(new KeyGesture(key));
+            CommandBindings.Add(new CommandBinding(cmd, handler));
+        }
+
         public EditVM(VM editVM)
         {
+            AddKeyCommand(Key.O, ModifierKeys.Control, Import_Drive);
+            AddKeyCommand(Key.N, ModifierKeys.Control, Create_Drive);
+            AddKeyCommand(Key.Delete, Remove_Drive);
+
             this.editVM = editVM;
             
             foreach (string drive in editVM.drives)
@@ -41,6 +59,7 @@ namespace qemui
         {
             EditLabel.Content += editVM.Name;
             VMName.Text = editVM.Name;
+            DriveList.ContextMenu = (ContextMenu)this.FindResource("DriveMenu");
 
             if (editVM.cdrom != null)
             {

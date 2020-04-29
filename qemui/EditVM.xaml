@@ -9,6 +9,11 @@
         Title="Edit VM" Height="387" Width="509" ShowInTaskbar="False" ResizeMode="NoResize">
     <Window.Resources>
         <local:RAMSliderConverter x:Key="RAMSliderConverter"/>
+        <ContextMenu x:Key="DriveMenu">
+            <MenuItem Header="Import" InputGestureText="Ctrl+O" Click="Import_Drive"/>
+            <MenuItem Header="Create" InputGestureText="Ctrl+N" Click="Create_Drive"/>
+            <MenuItem Header="Remove" InputGestureText="Delete" Click="Remove_Drive"/>
+        </ContextMenu>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>

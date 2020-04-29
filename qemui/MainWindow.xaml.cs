@@ -113,6 +113,11 @@ namespace qemui
                     Content = vm.Name + (vm.isRunning ? " - Running" : ""),
                     Name = "VM_" + vm.ID
                 };
+                item.MouseDoubleClick += (object a, MouseButtonEventArgs b) => { if (selectedVM != null) StartVM(null, null); };
+
+                ContextMenu menu = (ContextMenu)this.FindResource("VMMenu");
+
+                item.ContextMenu = menu;
                 VMListView.Items.Add(item);
             }
             VMListView.SelectedIndex = selected;
@@ -153,7 +158,6 @@ namespace qemui
             {
                 control.Visibility = Visibility.Hidden;
             }
-            VMListView.MouseDoubleClick += (object a, MouseButtonEventArgs b) => { if (selectedVM != null) StartVM(null, null); };
 
             UpdateListView();
         }
@@ -163,6 +167,12 @@ namespace qemui
             if (VMListView.SelectedIndex >= 0)
             {
                 selectedVM = vmlist.vms.ElementAt(VMListView.SelectedIndex);
+                ContextMenu menu = (ContextMenu)this.FindResource("VMMenu");
+                ((MenuItem)menu.Items[0]).IsEnabled = !selectedVM.isRunning;
+                ((MenuItem)menu.Items[1]).IsEnabled = !selectedVM.isRunning;
+                ((MenuItem)menu.Items[2]).IsEnabled = selectedVM.isRunning;
+                ((MenuItem)menu.Items[4]).IsEnabled = !selectedVM.isRunning;
+
                 foreach (Control control in VMData.Children)
                 {
                     control.Visibility = Visibility.Visible;
@@ -201,9 +211,10 @@ namespace qemui
         {
             if (selectedVM != null && !selectedVM.isRunning)
             {
-                ((ListBoxItem)VMListView.SelectedItem).Content += " - Running";
                 StartVMButton.IsEnabled = false;
                 StopVMButton.IsEnabled = true;
+                DeleteVMButton.IsEnabled = false;
+                EditVMButton.IsEnabled = false;
 
                 if (selectedVM.toArgs() != LaunchArgsBox.Text)
                 {
@@ -212,6 +223,7 @@ namespace qemui
                 {
                     selectedVM.Start();
                 }
+                UpdateListView();
             }
         }
 
@@ -236,16 +248,18 @@ namespace qemui
         {
             if (selectedVM != null && selectedVM.isRunning)
             {
-                ((ListBoxItem)VMListView.SelectedItem).Content = selectedVM.Name;
                 StopVMButton.IsEnabled = false;
                 StartVMButton.IsEnabled = true;
+                DeleteVMButton.IsEnabled = true;
+                EditVMButton.IsEnabled = true;
                 selectedVM.Stop();
+                UpdateListView();
             }
         }
 
         private void Delete(object sender, RoutedEventArgs e)
         {
-            if (selectedVM != null)
+            if (selectedVM != null && !selectedVM.isRunning)
             {
                 MessageBoxResult res = MessageBox.Show("Are you sure you want to delete " + selectedVM.Name + "?", "Delete VM", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
@@ -277,7 +291,7 @@ namespace qemui
 
         private void EditVM_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedVM != null)
+            if (selectedVM != null && !selectedVM.isRunning)
             {
                 EditVM editVM = new EditVM(selectedVM);
                 editVM.Owner = this;
